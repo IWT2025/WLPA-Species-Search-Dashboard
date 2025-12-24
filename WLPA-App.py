@@ -155,7 +155,6 @@ common_q = common_query.strip()
 sci_q = sci_query.strip()
 
 if not common_q and not sci_q:
-else:
     mask = pd.Series([True] * len(wlpa_1_3))
 
     if sci_q:
@@ -208,4 +207,5 @@ else:
             display4[["Schedule", "Appendix", "Scientific name / family / notes"]]
             .reset_index(drop=True)
         )
+
 
