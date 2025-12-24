@@ -55,41 +55,31 @@ def load_schedule_iv():
     """
     Load Schedule IV (Scheduled Specimens) from WLPA-SchIV.xlsx.
 
-    Expected columns in WLPA-SchIV.xlsx:
-        - 'Schedule'    (text like 'Schedule-IV')
-        - 'I'           (Appendix I entries)
-        - 'II_family'   (Appendix II family names or notes)
-        - 'II_species'  (Appendix II species names or notes)
-        - 'III'         (Appendix III entries)
+    Structure of WLPA-SchIV.xlsx:
+        - Sheet 'I'   : one column with species text for Appendix I
+        - Sheet 'II'  : one column with species text for Appendix II
+        - Sheet 'III' : one column with species text for Appendix III
 
-    All non-empty cells in I / II_family / II_species / III are kept exactly,
+    All non-empty cells in each sheet's single column are kept exactly,
     as 'ScientificNameOrText', with an Appendix column indicating I / II / III.
     """
-    # Read sheet (default first sheet); change sheet_name if needed
-    raw = pd.read_excel(SCHED4_FILE)
-
-    # Ensure expected columns exist; rename if your headers differ
-    col_map = {
-        "Schedule": "Schedule",
-        "I": "I",
-        "II_family": "II_family",
-        "II_species": "II_species",
-        "III": "III",
-    }
-    raw = raw.rename(columns=col_map)
-
-    # Fill missing columns if not present
-    for col in ["Schedule", "I", "II_family", "II_species", "III"]:
-        if col not in raw.columns:
-            raw[col] = ""
-
     records = []
 
-    def add_records_from_column(col_name, appendix_label):
-        # For each non-empty cell in the given column, create a record
-        for _, row in raw.iterrows():
-            schedule_val = str(row.get("Schedule", "")).strip()
-            text_val = row.get(col_name, None)
+    # Helper to read a sheet with a single species column
+    def read_appendix_sheet(sheet_name: str, appendix_label: str):
+        try:
+            df = pd.read_excel(SCHED4_FILE, sheet_name=sheet_name)
+        except Exception:
+            return
+
+        if df.empty:
+            return
+
+        # Assume the first column contains the species / text
+        first_col = df.columns[0]
+
+        for _, row in df.iterrows():
+            text_val = row.get(first_col, None)
 
             if pd.isna(text_val):
                 continue
@@ -99,24 +89,20 @@ def load_schedule_iv():
                 continue
 
             records.append({
-                "Schedule": schedule_val or "Schedule-IV",
+                "Schedule": "Schedule-IV",
                 "Appendix": appendix_label,
-                # Keep entire cell content as-is
                 "ScientificNameOrText": text_str,
             })
 
-    # Build records for Appendix I, II (two columns), III
-    add_records_from_column("I", "I")
-    add_records_from_column("II_family", "II")
-    add_records_from_column("II_species", "II")
-    add_records_from_column("III", "III")
+    # Read sheets I, II, III
+    read_appendix_sheet("I", "I")
+    read_appendix_sheet("II", "II")
+    read_appendix_sheet("III", "III")
 
     if not records:
         return pd.DataFrame(columns=["Schedule", "Appendix", "ScientificNameOrText"])
 
     df = pd.DataFrame(records)
-
-    # Normalize whitespace
     for col in ["Schedule", "Appendix", "ScientificNameOrText"]:
         df[col] = df[col].astype(str).str.strip()
 
