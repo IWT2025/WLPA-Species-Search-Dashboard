@@ -127,7 +127,7 @@ def load_schedule_iv():
 
 st.set_page_config(page_title="WLPA Species & Scheduled Specimens", layout="centered")
 
-st.title("WLPA Species & Scheduled Specimens Finder")
+st.title("WLPA Species Finder")
 
 st.markdown(
     "This app lets you search:\n"
@@ -144,18 +144,17 @@ wlpa_1_3 = load_wlpa_1_3()
 col1, col2 = st.columns(2)
 with col1:
     common_query = st.text_input(
-        "Common name (exact or partial match) – Schedules I–III", ""
+        "Common name (exact or partial match)", ""
     )
 with col2:
     sci_query = st.text_input(
-        "Scientific name (exact or partial match) – Schedules I–III", ""
+        "Scientific name (exact or partial match)", ""
     )
 
 common_q = common_query.strip()
 sci_q = sci_query.strip()
 
 if not common_q and not sci_q:
-    st.info("Enter a common name or scientific name to search Schedules I–III.")
 else:
     mask = pd.Series([True] * len(wlpa_1_3))
 
@@ -186,13 +185,12 @@ st.header("Scheduled Specimens (Schedule IV)")
 sched4 = load_schedule_iv()
 
 sched4_query = st.text_input(
-    "Search Scheduled Specimens by scientific name, family name or any text", ""
+    "Search by scientific name, family name or any text", ""
 )
 
 sched4_q = sched4_query.strip()
 
 if not sched4_q:
-    st.info("Enter text to search in Scheduled Specimens (Schedule IV).")
 else:
     mask4 = sched4["ScientificNameOrText"].str.contains(sched4_q, case=False, na=False)
     results4 = sched4[mask4].copy()
@@ -210,3 +208,4 @@ else:
             display4[["Schedule", "Appendix", "Scientific name / family / notes"]]
             .reset_index(drop=True)
         )
+
