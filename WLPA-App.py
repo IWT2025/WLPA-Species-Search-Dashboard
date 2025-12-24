@@ -190,7 +190,6 @@ sched4_query = st.text_input(
 sched4_q = sched4_query.strip()
 
 if not sched4_q:
-else:
     mask4 = sched4["ScientificNameOrText"].str.contains(sched4_q, case=False, na=False)
     results4 = sched4[mask4].copy()
 
@@ -207,5 +206,6 @@ else:
             display4[["Schedule", "Appendix", "Scientific name / family / notes"]]
             .reset_index(drop=True)
         )
+
 
 
