@@ -144,4 +144,3 @@ else:
         st.dataframe(
             display[["Schedule", "Appendix", "Common name", "Scientific name"]].reset_index(drop=True)
         )
-
