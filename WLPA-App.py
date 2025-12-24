@@ -155,6 +155,8 @@ common_q = common_query.strip()
 sci_q = sci_query.strip()
 
 if not common_q and not sci_q:
+    st.info("Enter a common name or scientific name to search Schedules I–III.")
+else:
     mask = pd.Series([True] * len(wlpa_1_3))
 
     if sci_q:
@@ -190,6 +192,8 @@ sched4_query = st.text_input(
 sched4_q = sched4_query.strip()
 
 if not sched4_q:
+    st.info("Enter text to search in Scheduled Specimens (Schedule IV).")
+else:
     mask4 = sched4["ScientificNameOrText"].str.contains(sched4_q, case=False, na=False)
     results4 = sched4[mask4].copy()
 
@@ -206,6 +210,3 @@ if not sched4_q:
             display4[["Schedule", "Appendix", "Scientific name / family / notes"]]
             .reset_index(drop=True)
         )
-
-
-
