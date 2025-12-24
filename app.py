@@ -47,7 +47,7 @@ def load_schedule_4_from_cites():
     """
     api_token = st.secrets["CITES_API_TOKEN"]
 
-    headers = {"X-Authentication-Token": VtTwe4cvGQig8kG3MSBchAtt}
+    headers = {"X-Authentication-Token": api_token}
 
     # NOTE: This is a simple example using the Species+ 'taxon_concepts' endpoint.
     # You may later refine filters (e.g. by country) if needed.
@@ -144,3 +144,4 @@ else:
         st.dataframe(
             display[["Schedule", "Appendix", "Common name", "Scientific name"]].reset_index(drop=True)
         )
+
