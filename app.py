@@ -148,6 +148,12 @@ st.write(
     "and CITES Appendix (for Schedule IV species)."
 )
 
+# Debug info for you
+sched4_debug = load_schedule_4_from_cites()
+st.write("Schedule IV (CITES) – number of rows loaded:", len(sched4_debug))
+st.write("First 10 Schedule IV rows from API:")
+st.dataframe(sched4_debug.head(10))
+
 data = load_all_data()
 
 common_input = st.text_input("Common name (exact or partial match)", "")
@@ -181,3 +187,4 @@ else:
         st.dataframe(
             display[["Schedule", "Appendix", "Common name", "Scientific name"]].reset_index(drop=True)
         )
+
