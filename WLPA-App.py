@@ -46,7 +46,7 @@ st.markdown(
 
     /* PAGE TITLE (st.title -> h1) */
     h1 {
-        font-size: 24px;
+        font-size: 22px;
         font-weight: 600;
         text-align: center;
     }
@@ -316,3 +316,4 @@ if sched4_q:
             display4[["Schedule", "Appendix", "Scientific name / family"]]
             .reset_index(drop=True)
         )
+
