@@ -121,6 +121,33 @@ st.markdown(
     "- **Scheduled specimens (Schedule IV)** by scientific names. Scheduled specimens are commonly called exotic species."
 )
 
+st.set_page_config(page_title="WLPA Species & Scheduled Specimens (Exotics)", layout="centered")
+
+# ↓ Add this CSS block to control font sizes (adjust px values as you like)
+st.markdown(
+    """
+    <style>
+    /* Main body text and widget labels */
+    .stMarkdown, .stTextInput label, .stTextInput div, .stDataFrame div {
+        font-size: 14px;
+    }
+
+    /* Page title and section headers */
+    h1 {
+        font-size: 22px;
+    }
+    h2 {
+        font-size: 18px;
+    }
+    h3 {
+        font-size: 16px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+
 # ---------- SECTION 1: SCHEDULE I–III SEARCH ----------
 
 st.header("Species in Schedules I–III")
@@ -196,8 +223,3 @@ else:
             display4[["Schedule", "Appendix", "Scientific name / family"]]
             .reset_index(drop=True)
         )
-
-
-
-
-
