@@ -172,7 +172,7 @@ st.header("Scheduled Specimens (Schedule IV)")
 sched4 = load_schedule_iv()
 
 sched4_query = st.text_input(
-    "Search by scientific name, family name or any text", ""
+    "Search ONLY by scientific name/family name", ""
 )
 
 sched4_q = sched4_query.strip()
@@ -196,4 +196,5 @@ else:
             display4[["Schedule", "Appendix", "Scientific name / family"]]
             .reset_index(drop=True)
         )
+
 
