@@ -9,76 +9,126 @@ SCHED4_FILE = "WLPA-SchIV.xlsx"
 
 st.set_page_config(page_title="WLPA Species & Scheduled Specimens (Exotics)", layout="centered")
 
-# =======================  ### BEGIN FONT SETTINGS  =======================
+# =======================  RESPONSIVE FONT & COLOR SETTINGS  =======================
 st.markdown(
     """
     <style>
-    /* PAGE BACKGROUND (OPTIONAL) */
-    body {
+    /* Default (desktop-ish) base styles */
+    html, body {
         font-family: Arial, sans-serif;
-        color: #ffffff;
+        font-size: 16px;
     }
 
-    /* PAGE TITLE (st.title) */
+    /* Light mode defaults */
+    body {
+        background-color: #ffffff;
+        color: #111111;
+    }
+
+    /* Dark mode override when OS/browser prefers dark */
+    @media (prefers-color-scheme: dark) {
+        body {
+            background-color: #000000;
+            color: #f5f5f5;
+        }
+
+        h1, h2, h3 {
+            color: #f5f5f5;
+        }
+
+        .stMarkdown p,
+        .stTextInput label,
+        .stTextInput input,
+        .stDataFrame div {
+            color: #f5f5f5;
+        }
+    }
+
+    /* PAGE TITLE (st.title -> h1) */
     h1 {
-        font-size: 20px;
-        font-family: Arial, sans-serif;
-        color: #ffffff;
+        font-size: 24px;
+        font-weight: 600;
     }
 
     /* SECTION HEADERS (st.header -> h2) */
     h2 {
-        font-size: 18px;
-        font-family: Arial, sans-serif;
-        color: #ffffff;
+        font-size: 20px;
+        font-weight: 600;
     }
 
-    /* SUBHEADERS (st.subheader -> h3, if you use them later) */
+    /* SUBHEADERS (st.subheader -> h3, if used) */
     h3 {
-        font-size: 16px;
-        font-family: Arial, sans-serif;
-        color: #ffffff;
+        font-size: 18px;
+        font-weight: 500;
     }
 
-    /* NORMAL TEXT (st.markdown, st.write) */
+    /* NORMAL TEXT (st.markdown paragraphs) */
     .stMarkdown p {
         font-size: 14px;
-        font-family: Arial, sans-serif;
-        color: #ffffff;
     }
 
     /* TEXT INPUT LABELS */
     .stTextInput label {
         font-size: 13px;
-        font-family: Arial, sans-serif;
-        color: #ffffff;   /* label color for dark mode */
     }
 
     /* TEXT INSIDE TEXT INPUT BOX */
     .stTextInput input {
         font-size: 13px;
-        font-family: Arial, sans-serif;
-        color: #ffffff;   /* typed text color for dark mode */
     }
 
-    /* DATAFRAME TABLE TEXT */
+    /* TABLE TEXT */
     .stDataFrame div {
         font-size: 13px;
-        font-family: Arial, sans-serif;
-        color: #ffffff;
     }
 
-    /* SUCCESS / WARNING / INFO MESSAGES */
     .stAlert {
         font-size: 13px;
-        font-family: Arial, sans-serif;
+    }
+
+    /* --------- MOBILE / SMALL SCREEN ADJUSTMENTS --------- */
+    @media (max-width: 768px) {
+        html, body {
+            font-size: 14px;   /* slightly smaller base font on mobile */
+        }
+
+        h1 {
+            font-size: 20px;
+        }
+
+        h2 {
+            font-size: 18px;
+        }
+
+        h3 {
+            font-size: 16px;
+        }
+
+        .stMarkdown p {
+            font-size: 13px;
+        }
+
+        .stTextInput label {
+            font-size: 12px;
+        }
+
+        .stTextInput input {
+            font-size: 12px;
+        }
+
+        .stDataFrame div {
+            font-size: 12px;
+        }
+
+        .stAlert {
+            font-size: 12px;
+        }
     }
     </style>
     """,
     unsafe_allow_html=True,
 )
-# =======================  ### END FONT SETTINGS  =======================
-
+# =======================  END RESPONSIVE SETTINGS  =======================
 
 st.title("The Wild Life (Protection) Act, 1972 - Scheduled Species Finder")
 
@@ -267,4 +317,3 @@ else:
             display4[["Schedule", "Appendix", "Scientific name / family"]]
             .reset_index(drop=True)
         )
-
