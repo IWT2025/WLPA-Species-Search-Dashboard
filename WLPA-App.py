@@ -118,7 +118,7 @@ st.title("The Wild Life (Protection) Act, 1972 - Scheduled Species Finder")
 st.markdown(
     "This app lets you search:\n"
     "- **WLPA Schedules I, II, III** by common or scientific name, and\n"
-    "- **Scheduled specimens (Schedule IV)** by scientific names."
+    "- **Scheduled specimens (Schedule IV)** by scientific names. Scheduled specimens are commonly called exotic species."
 )
 
 # ---------- SECTION 1: SCHEDULE I–III SEARCH ----------
@@ -167,7 +167,7 @@ else:
 
 # ---------- SECTION 2: SCHEDULED SPECIMENS (SCHEDULE IV) ----------
 
-st.header("Scheduled Specimens (Schedule IV)")
+st.header("Scheduled Specimens (Schedule IV) - Exotics")
 
 sched4 = load_schedule_iv()
 
@@ -196,6 +196,7 @@ else:
             display4[["Schedule", "Appendix", "Scientific name / family"]]
             .reset_index(drop=True)
         )
+
 
 
 
