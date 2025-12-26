@@ -113,7 +113,7 @@ def load_schedule_iv():
 
 st.set_page_config(page_title="WLPA Species & Scheduled Specimens", layout="centered")
 
-st.title("WLPA Species Finder")
+st.title("The Wild Life (Protection) Act, 1972 - Scheduled Species Finder")
 
 st.markdown(
     "This app lets you search:\n"
