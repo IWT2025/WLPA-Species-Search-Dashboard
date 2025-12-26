@@ -21,21 +21,21 @@ st.markdown(
 
     /* PAGE TITLE (st.title) */
     h1 {
-        font-size: 24px;
+        font-size: 20px;
         font-family: Arial, sans-serif;
         color: #ffffff;
     }
 
     /* SECTION HEADERS (st.header -> h2) */
     h2 {
-        font-size: 20px;
+        font-size: 18px;
         font-family: Arial, sans-serif;
         color: #ffffff;
     }
 
     /* SUBHEADERS (st.subheader -> h3, if you use them later) */
     h3 {
-        font-size: 18px;
+        font-size: 16px;
         font-family: Arial, sans-serif;
         color: #ffffff;
     }
@@ -267,3 +267,4 @@ else:
             display4[["Schedule", "Appendix", "Scientific name / family"]]
             .reset_index(drop=True)
         )
+
