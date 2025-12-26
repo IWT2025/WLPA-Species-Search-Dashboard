@@ -111,7 +111,7 @@ def load_schedule_iv():
 
 # ---------- STREAMLIT APP LAYOUT ----------
 
-st.set_page_config(page_title="WLPA Species & Scheduled Specimens", layout="centered")
+st.set_page_config(page_title="WLPA Species & Scheduled Specimens (Exotics)", layout="centered")
 
 st.title("The Wild Life (Protection) Act, 1972 - Scheduled Species Finder")
 
@@ -196,5 +196,6 @@ else:
             display4[["Schedule", "Appendix", "Scientific name / family"]]
             .reset_index(drop=True)
         )
+
 
 
