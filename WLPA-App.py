@@ -46,7 +46,7 @@ st.markdown(
 
     /* PAGE TITLE (st.title -> h1) */
     h1 {
-        font-size: 22px;
+        font-size: 24px;
         font-weight: 600;
         text-align: center;
     }
@@ -90,7 +90,7 @@ st.markdown(
     /* --------- MOBILE / SMALL SCREEN ADJUSTMENTS --------- */
     @media (max-width: 768px) {
         html, body {
-            font-size: 14px;   /* slightly smaller base font on mobile */
+            font-size: 14px;
         }
 
         h1 {
@@ -262,9 +262,8 @@ with col2:
 common_q = common_query.strip()
 sci_q = sci_query.strip()
 
-if not common_q and not sci_q:
-    st.info("Enter a common name or scientific name to search Schedules I–III.")
-else:
+# Only run search when at least one input has text
+if common_q or sci_q:
     mask = pd.Series([True] * len(wlpa_1_3))
 
     if sci_q:
@@ -299,9 +298,8 @@ sched4_query = st.text_input(
 
 sched4_q = sched4_query.strip()
 
-if not sched4_q:
-    st.info("Enter text to search in Scheduled Specimens (Schedule IV).")
-else:
+# Only run search when there is text
+if sched4_q:
     mask4 = sched4["ScientificNameOrText"].str.contains(sched4_q, case=False, na=False)
     results4 = sched4[mask4].copy()
 
@@ -318,5 +316,3 @@ else:
             display4[["Schedule", "Appendix", "Scientific name / family"]]
             .reset_index(drop=True)
         )
-
-
