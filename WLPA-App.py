@@ -118,7 +118,7 @@ st.title("The Wild Life (Protection) Act, 1972 - Scheduled Species Finder")
 st.markdown(
     "This app lets you search:\n"
     "- **WLPA Schedules I, II, III** by common or scientific name, and\n"
-    "- **Scheduled specimens (Schedule IV)** by scientific/family names or notes."
+    "- **Scheduled specimens (Schedule IV)** by scientific/family names."
 )
 
 # ---------- SECTION 1: SCHEDULE I–III SEARCH ----------
@@ -190,9 +190,10 @@ else:
         display4 = results4.rename(columns={
             "Schedule": "Schedule",
             "Appendix": "Appendix",
-            "ScientificNameOrText": "Scientific name / family / notes",
+            "ScientificNameOrText": "Scientific name / family",
         })
         st.dataframe(
-            display4[["Schedule", "Appendix", "Scientific name / family / notes"]]
+            display4[["Schedule", "Appendix", "Scientific name / family"]]
             .reset_index(drop=True)
         )
+
