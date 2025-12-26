@@ -118,7 +118,7 @@ st.title("The Wild Life (Protection) Act, 1972 - Scheduled Species Finder")
 st.markdown(
     "This app lets you search:\n"
     "- **WLPA Schedules I, II, III** by common or scientific name, and\n"
-    "- **Scheduled specimens (Schedule IV)** by scientific/family names."
+    "- **Scheduled specimens (Schedule IV)** by scientific names."
 )
 
 # ---------- SECTION 1: SCHEDULE I–III SEARCH ----------
@@ -172,7 +172,7 @@ st.header("Scheduled Specimens (Schedule IV)")
 sched4 = load_schedule_iv()
 
 sched4_query = st.text_input(
-    "Search ONLY by scientific name/family name", ""
+    "Search ONLY by scientific name", ""
 )
 
 sched4_q = sched4_query.strip()
@@ -196,6 +196,7 @@ else:
             display4[["Schedule", "Appendix", "Scientific name / family"]]
             .reset_index(drop=True)
         )
+
 
 
 
