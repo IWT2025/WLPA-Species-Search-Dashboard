@@ -48,6 +48,7 @@ st.markdown(
     h1 {
         font-size: 22px;
         font-weight: 600;
+        text-align: center;
     }
 
     /* SECTION HEADERS (st.header -> h2) */
@@ -317,4 +318,5 @@ else:
             display4[["Schedule", "Appendix", "Scientific name / family"]]
             .reset_index(drop=True)
         )
+
 
