@@ -5,6 +5,93 @@ import streamlit as st
 WLPA_FILE = "WLPA.xlsx"
 SCHED4_FILE = "WLPA-SchIV.xlsx"
 
+# ---------- STREAMLIT APP LAYOUT ----------
+
+st.set_page_config(page_title="WLPA Species & Scheduled Specimens (Exotics)", layout="centered")
+
+# =======================  ### BEGIN FONT SETTINGS  =======================
+# Edit only the values inside font-size, font-family, color
+# Example font families: Arial, 'Helvetica Neue', 'Times New Roman', 'Courier New'
+# Example colors: #000000 (black), #333333 (dark grey), #006400 (dark green), #003366 (blue)
+
+st.markdown(
+    """
+    <style>
+    /* PAGE BACKGROUND (OPTIONAL) */
+    body {
+        font-family: Arial, sans-serif;
+        color: #222222;
+    }
+
+    /* PAGE TITLE (st.title) */
+    h1 {
+        font-size: 24px;        /* change title size */
+        font-family: Arial, sans-serif;  /* change title font */
+        color: #004080;         /* change title color */
+    }
+
+    /* SECTION HEADERS (st.header -> h2) */
+    h2 {
+        font-size: 20px;        /* change section header size */
+        font-family: Arial, sans-serif;  /* change section header font */
+        color: #005c2e;         /* change section header color */
+    }
+
+    /* SUBHEADERS (st.subheader -> h3, if you use them later) */
+    h3 {
+        font-size: 18px;        /* change subheader size */
+        font-family: Arial, sans-serif;  /* change subheader font */
+        color: #333333;         /* change subheader color */
+    }
+
+    /* NORMAL TEXT (st.markdown, st.write) */
+    .stMarkdown p {
+        font-size: 14px;        /* change normal paragraph size */
+        font-family: Arial, sans-serif;  /* change normal text font */
+        color: #222222;         /* change normal text color */
+    }
+
+    /* TEXT INPUT LABELS */
+    .stTextInput label {
+        font-size: 13px;        /* change text box label size */
+        font-family: Arial, sans-serif;  /* change label font */
+        color: #222222;         /* change label color */
+    }
+
+    /* TEXT INSIDE TEXT INPUT BOX */
+    .stTextInput input {
+        font-size: 13px;        /* change text typed into box */
+        font-family: Arial, sans-serif;  /* change input text font */
+        color: #000000;         /* change input text color */
+    }
+
+    /* DATAFRAME TABLE TEXT */
+    .stDataFrame div {
+        font-size: 13px;        /* change table text size */
+        font-family: Arial, sans-serif;  /* change table font */
+        color: #000000;         /* change table text color */
+    }
+
+    /* SUCCESS / WARNING / INFO MESSAGES */
+    .stAlert {
+        font-size: 13px;        /* change message box text size */
+        font-family: Arial, sans-serif;  /* change message box font */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+# =======================  ### END FONT SETTINGS  =======================
+
+
+st.title("The Wild Life (Protection) Act, 1972 - Scheduled Species Finder")
+
+st.markdown(
+    "This app lets you search:\n"
+    "- **WLPA Schedules I, II, III** by common or scientific name, and\n"
+    "- **Scheduled specimens (Schedule IV)** by scientific names. Scheduled specimens are commonly called exotic species."
+)
+
 # ---------- LOAD WLPA SCHEDULES I–III (GENERAL SPECIES SEARCH) ----------
 
 @st.cache_data
@@ -107,45 +194,6 @@ def load_schedule_iv():
         df[col] = df[col].astype(str).str.strip()
 
     return df
-
-
-# ---------- STREAMLIT APP LAYOUT ----------
-
-st.set_page_config(page_title="WLPA Species & Scheduled Specimens (Exotics)", layout="centered")
-
-st.title("The Wild Life (Protection) Act, 1972 - Scheduled Species Finder")
-
-st.markdown(
-    "This app lets you search:\n"
-    "- **WLPA Schedules I, II, III** by common or scientific name, and\n"
-    "- **Scheduled specimens (Schedule IV)** by scientific names. Scheduled specimens are commonly called exotic species."
-)
-
-st.set_page_config(page_title="WLPA Species & Scheduled Specimens (Exotics)", layout="centered")
-
-# ↓ Add this CSS block to control font sizes (adjust px values as you like)
-st.markdown(
-    """
-    <style>
-    /* Main body text and widget labels */
-    .stMarkdown, .stTextInput label, .stTextInput div, .stDataFrame div {
-        font-size: 14px;
-    }
-
-    /* Page title and section headers */
-    h1 {
-        font-size: 22px;
-    }
-    h2 {
-        font-size: 18px;
-    }
-    h3 {
-        font-size: 16px;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
 
 
 # ---------- SECTION 1: SCHEDULE I–III SEARCH ----------
