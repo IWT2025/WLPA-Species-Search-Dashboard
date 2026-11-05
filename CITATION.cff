@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below and credit the Wildlife Trust of India."
+title: "WLPA Species Lookup: Schedules I–IV of the Wild Life (Protection) Act, 1972, as on 5 June 2025"
+type: software
+authors:
+  - name: "Wildlife Trust of India"
+    website: "https://www.wti.org.in/"
+url: "https://wlpa-species-search.streamlit.app/"
+repository-code: "https://github.com/IWT2025/WLPA-Species-Search-Dashboard"
+date-released: 2026-11-05
+keywords:
+  - Wild Life (Protection) Act 1972
+  - wildlife law
+  - India
+  - CITES
+  - IUCN Red List
+  - wildlife crime
