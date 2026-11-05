@@ -15,12 +15,18 @@ import streamlit as st
 st.set_page_config(page_title="WLPA Species Reference", page_icon="🐾",
                    layout="wide", initial_sidebar_state="collapsed")
 
-# let the page use the whole window: drop Streamlit's padding and header
+# The page is a full-screen app with its Search / Browse / About bar pinned
+# to the bottom of the window. Inside a fixed-height frame that bar ends up
+# below the screen, so the frame is pinned to the browser window instead:
+# exactly one screen tall, with the page scrolling inside it.
 st.markdown("""
 <style>
+  header[data-testid="stHeader"], footer {display: none !important;}
   .block-container {padding: 0 !important; max-width: 100% !important;}
-  header[data-testid="stHeader"] {display: none;}
-  footer {display: none;}
+  iframe {position: fixed !important; inset: 0 !important;
+          width: 100vw !important; height: 100vh !important;
+          height: 100dvh !important; border: 0 !important; z-index: 999;}
+  html, body {overflow: hidden !important;}
 </style>""", unsafe_allow_html=True)
 
 HTML = pathlib.Path(__file__).with_name("WLPA_species_reference.html")
