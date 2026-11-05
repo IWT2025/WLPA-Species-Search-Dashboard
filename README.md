@@ -99,7 +99,7 @@ citation in other formats.
 Data drawn from third parties remains subject to their own terms, in
 particular the [IUCN Red List terms of use](https://www.iucnredlist.org/terms/terms-of-use)
 and [CITES Species+](https://speciesplus.net/). The Act itself is published by
-the Government of India on [India Code](https://www.indiacode.nic.in/).
+the Government of India on [India Code](https://indiacode.gov.in/).
 
 ## Reporting an error
 
