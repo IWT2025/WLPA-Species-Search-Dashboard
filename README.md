@@ -101,6 +101,14 @@ particular the [IUCN Red List terms of use](https://www.iucnredlist.org/terms/te
 and [CITES Species+](https://speciesplus.net/). The Act itself is published by
 the Government of India on [India Code](https://indiacode.gov.in/).
 
+**Photos** are not WTI's: they come from Wikimedia Commons and iNaturalist
+under free licences (CC0, CC BY, CC BY-SA, CC BY-NC or public domain), and each
+is shown with its author and licence. Reuse a photo only on the terms of its
+own licence; CC BY-NC photos may not be used commercially. Photos are for
+orientation only, never for identifying a specimen. Habitat, origin in India,
+use and trade, and member-species lists are search aids compiled by WTI from
+IUCN, WoRMS and GBIF, not part of the Act.
+
 ## Reporting an error
 
 If you find an entry that looks wrong, please open an
