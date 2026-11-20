@@ -36,6 +36,14 @@ input[type=search]::placeholder{color:#8A948D}
 input[type=search]:focus,select:focus,button:focus-visible,summary:focus-visible{
   outline:2.5px solid var(--orange);outline-offset:1px}
 .filters{display:flex;flex-wrap:wrap;justify-content:center;gap:.35rem;margin-top:.45rem}
+.filters .fhint{flex:0 0 100%;margin:0 0 .1rem;font-size:.74rem;color:var(--ink-2)}
+.filters select.on{background-color:#DCEBD7;border-color:var(--green);font-weight:700;color:var(--green-d)}
+.chips{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center;margin:-.2rem 0 .7rem;font-size:.78rem}
+.chips .chip{background:#DCEBD7;border:1px solid var(--green);border-radius:999px;padding:.12rem .25rem .12rem .6rem;
+  color:var(--green-d);font:inherit;font-size:.78rem;cursor:pointer}
+.chips .chip b{margin-left:.35rem;font-weight:700}
+.chips .clearall{background:none;border:0;font:inherit;font-size:.78rem;font-weight:700;color:var(--green);
+  text-decoration:underline;cursor:pointer;padding:0 .2rem}
 .filters select{box-sizing:border-box;flex:0 0 calc((100% - .35rem) / 2);min-width:0}
 select{font:inherit;font-size:.78rem;width:100%;padding:.32rem 1.3rem .32rem .4rem;
   border:1px solid var(--rule);border-radius:3px;color:var(--ink);
@@ -143,19 +151,20 @@ a{color:var(--green)}
     </div>
     <div class="brand"><span class="sub">Wildlife Trust of India &middot; FOR QUICK REFERENCE</span></div>
     <div class="ver">Schedules as in the Wild Life (Protection) Act, 1972, as on 5 June 2025</div>
-    <input type="search" id="q" placeholder="Species, common or local name" autocomplete="off"
+    <input type="search" id="q" placeholder="Search any species: common, scientific or local name" autocomplete="off"
            autocapitalize="none" spellcheck="false" aria-label="Search species">
     <div class="filters" id="filters">
-      <select id="fs" aria-label="Filter by schedule"></select>
-      <select id="fw" aria-label="Filter by WLPA category"></select>
-      <select id="fh" aria-label="Filter by habitat"></select>
-      <select id="foi" aria-label="Filter by occurrence in India"></select>
-      <select id="fut" aria-label="Filter by use and trade"></select>
-      <select id="fc" aria-label="Filter by CITES appendix"></select>
-      <select id="fi" aria-label="Filter by IUCN status"></select>
-      <select id="fgp" aria-label="Filter by species group"></select>
-      <select id="fcl" aria-label="Filter by class"></select>
-      <select id="fo" aria-label="Filter by order"></select>
+      <p class="fhint">Filters are optional: use them to narrow the list, or just type a name above.</p>
+      <select id="fs" aria-label="Filter by schedule" title="WLPA Schedule I to IV"></select>
+      <select id="fw" aria-label="Filter by WLPA category" title="The Act's own categories (Turtles & Tortoises, Snakes ...), Schedules I to III"></select>
+      <select id="fh" aria-label="Filter by habitat" title="Where the species lives; 'Any marine' and 'Any freshwater' combine the types"></select>
+      <select id="foi" aria-label="Filter by occurrence in India" title="Native, endemic, exotic (scheduled specimen), visitor or extinct in India"></select>
+      <select id="fut" aria-label="Filter by use and trade" title="What the species is used and traded for (IUCN, worldwide)"></select>
+      <select id="fc" aria-label="Filter by CITES appendix" title="CITES Appendix I, II or III"></select>
+      <select id="fi" aria-label="Filter by IUCN status" title="IUCN Red List category"></select>
+      <select id="fgp" aria-label="Filter by species group" title="Animal or plant group (mammal, bird, reptile ...), all Schedules"></select>
+      <select id="fcl" aria-label="Filter by class" title="Taxonomic class"></select>
+      <select id="fo" aria-label="Filter by order" title="Taxonomic order"></select>
     </div>
   </div>
 </header>
@@ -359,7 +368,7 @@ document.getElementById('fut').innerHTML =
   const order = ['MAMMALS','BIRDS','REPTILES','AMPHIBIANS','FISHES'];
   const keys = [...parts.keys()].sort((a, b) =>
     ((order.indexOf(a) + 1) || 99) - ((order.indexOf(b) + 1) || 99) || a.localeCompare(b));
-  document.getElementById('fw').innerHTML = '<option value="">Any WLPA category (Sch I–III)</option>' +
+  document.getElementById('fw').innerHTML = '<option value="">Any WLPA category</option>' +
     keys.map(pt => `<optgroup label="${esc(titleCase(pt))}">` +
       `<option value="P:${esc(pt)}">All ${esc(titleCase(pt).replace(/\s*\(.*\)/, ''))}</option>` +
       [...parts.get(pt)].sort().map(g => `<option value="H:${esc(pt)}|${esc(g)}">${esc(g)}</option>`).join('') +
@@ -387,7 +396,7 @@ document.getElementById('fi').innerHTML =
 function refreshTaxonomySelects() {
   const uniq = (key, pred) => [...new Set(D.filter(pred).map(r => r[key]).filter(Boolean))].sort();
   const groups = uniq('gp', () => true);
-  fill(document.getElementById('fgp'), groups.map(v=>[v,v]), 'Any group (all Schedules)', F.gp);
+  fill(document.getElementById('fgp'), groups.map(v=>[v,v]), 'Any group', F.gp);
   const classes = uniq('cl', r => !F.gp || r.gp === F.gp);
   if (F.cl && !classes.includes(F.cl)) F.cl = '';
   fill(document.getElementById('fcl'), classes.map(v=>[v,v]), 'Any class', F.cl);
@@ -433,14 +442,56 @@ function pass(r, keepFolded) {
   return true;
 }
 
+// ---- filters on? which ones hide a species? -----------------------------
+const FNAME = {s:'Schedule', w:'WLPA category', h:'Habitat', oi:'Origin', ut:'Use or trade',
+  c:'CITES', i:'IUCN', gp:'Group', cl:'Class', o:'Order'};
+const FSEL = {s:'fs', w:'fw', h:'fh', oi:'foi', ut:'fut', c:'fc', i:'fi', gp:'fgp', cl:'fcl', o:'fo'};
+const filtersOn = () => Object.keys(F).filter(k => F[k]);
+function withFilters(only, fn) {          // run fn with only the given filters set
+  const saved = {...F};
+  Object.keys(F).forEach(k => F[k] = only.includes(k) ? saved[k] : '');
+  try { return fn(); } finally { Object.assign(F, saved); }
+}
+function blockedBy(r) {                    // the active filters that exclude r
+  return filtersOn().filter(k => !withFilters([k], () => pass(r, true)));
+}
+let hidden = [];                           // matches the filters are hiding
+
 function matches() {
   const qq = fold(q.trim());
+  const on = filtersOn();
   let out = D.filter(r => pass(r));
   folded = D.filter(r => r.dm && F.s !== 'IV' && pass(r, true)
                          && (!qq || r._k.includes(qq)
                              || words(qq).every(w => r._k.includes(w)))).length;
   closeOnly = false;
+  hidden = [];
+  if (qq && on.length) {
+    // the same search with no filters, as typed (no close spellings): what
+    // the filters hide is reported, so nobody misses a species silently
+    const all = withFilters([], () => searchPool(D.filter(r => pass(r)), qq, false));
+    const shown = searchPool(out, qq, false);
+    const seen = new Set(shown);
+    hidden = all.filter(r => !seen.has(r));
+    if (shown.length || hidden.length) return shown;
+  }
   if (qq) {
+    const res = searchPool(out, qq, true);
+    // a close spelling the filters hide is reported too ("leapord" with
+    // Habitat = Exclusively marine)
+    if (!res.length && on.length) {
+      hidden = withFilters([], () => searchPool(D.filter(r => pass(r)), qq, true));
+      closeOnly = false;
+    }
+    return res;
+  }
+  out.sort((a,b) => a.cn.localeCompare(b.cn) || (isWLPA(b)-isWLPA(a)));
+  return out;
+}
+
+function searchPool(pool, qq, allowClose) {
+  let out = pool;
+  {
     // tier 1: the text as typed; tier 2: every word, in any order
     const ws = words(qq);
     const tier = r => r._k.includes(qq) ? rank(r, qq)
@@ -453,7 +504,7 @@ function matches() {
                     : 99;
     let hit = out.map(r => [r, tier(r)]).filter(x => x[1] < 99);
     // tier 3: close spellings, only when nothing matched as typed
-    if (!hit.length) {
+    if (!hit.length && allowClose) {
       const fz = fuzzyHits(qq);
       if (fz && fz.size) {
         const qs = words(qq).filter(w => w.length >= 4);
@@ -465,8 +516,6 @@ function matches() {
     // WLPA listings before the CITES mirror, since domestic law is the primary answer
     hit.sort((a,b) => a[1]-b[1] || (isWLPA(b[0])-isWLPA(a[0])) || a[0].cn.localeCompare(b[0].cn));
     out = hit.map(x => x[0]);
-  } else {
-    out.sort((a,b) => a.cn.localeCompare(b.cn) || (isWLPA(b)-isWLPA(a)));
   }
   return out;
 }
@@ -505,18 +554,49 @@ function hitHTML(r, idx) {
     ${ci}<span class="tag g${t}">${esc(label)}</span></button></li>`;
 }
 
+function chipsHTML() {
+  const on = filtersOn();
+  if (!on.length) return '';
+  return `<div class="chips"><span>Filtered by:</span>` + on.map(k => {
+      const el = document.getElementById(FSEL[k]);
+      const txt = (el.selectedOptions[0] || {}).text || F[k];
+      return `<button class="chip" data-clear="${k}" title="Remove this filter">${esc(FNAME[k])}: ${esc(txt)}<b>&times;</b></button>`;
+    }).join('') + `<button class="clearall" data-clearall="1">Clear all filters</button></div>`;
+}
+function hiddenHTML(n) {
+  if (!hidden.length) return '';
+  const why = {};
+  hidden.forEach(r => blockedBy(r).forEach(k => why[k] = (why[k] || 0) + 1));
+  const names = Object.keys(why).map(k => FNAME[k]);
+  const by = names.length === 1 ? `the ${names[0]} filter`
+    : `your filters (${names.join(', ')})`;
+  const what = hidden.length === 1 ? `1 match is` : `${hidden.length} matches are`;
+  const eg = hidden.slice(0, 3).map(r => r.cn || r.sn).join(', ');
+  return n === 0
+    ? `<div style="background:#FFF4D6;color:#5A4300;padding:.6rem .75rem;border-radius:3px;margin:.2rem 0 .8rem;font-size:.88rem">
+        No results for &ldquo;${esc(q.trim())}&rdquo; with your filters. <b>${what} hidden by ${esc(by)}</b>
+        (${esc(eg)}${hidden.length > 3 ? ' …' : ''}).
+        <button data-clearall="1" style="background:none;border:0;padding:0;font:inherit;font-weight:700;color:var(--green);text-decoration:underline;cursor:pointer">Clear filters to show ${hidden.length === 1 ? 'it' : 'them'}</button></div>`
+    : `<p style="font-size:.8rem;color:#5A4300;background:#FFF4D6;padding:.35rem .55rem;border-radius:3px;margin:-.2rem 0 .6rem">
+        ${what.replace(' is', ' more is').replace(' are', ' more are')} hidden by ${esc(by)} (${esc(eg)}${hidden.length > 3 ? ' …' : ''}).
+        <button data-clearall="1" style="background:none;border:0;padding:0;font:inherit;font-weight:700;color:var(--green);text-decoration:underline;cursor:pointer">Clear filters</button></p>`;
+}
+
 function renderList() {
   const res = matches(), main = document.getElementById('main');
+  const on = filtersOn().length;
   if (!res.length) {
-    main.innerHTML = `<p class="count" role="status">No entries</p>
-      <div class="empty">Nothing matches that. Try the genus on its own, or clear a filter.
-      Scientific names as misprinted in the Act are searchable too.</div>`;
+    main.innerHTML = `<p class="count" role="status">No entries</p>${chipsHTML()}${hiddenHTML(0)}
+      ${hidden.length ? '' : `<div class="empty">Nothing matches that. Try the genus on its own${on ? ', or clear a filter' : ''}.
+      Scientific names as misprinted in the Act are searchable too.</div>`}`;
     return;
   }
   const show = res.slice(0,300);
   lastList = res;
-  main.innerHTML = `<p class="count" role="status">${res.length} entr${res.length===1?'y':'ies'}${res.length>300?' — first 300 shown':''}
+  const total = D.filter(r => !r.dm).length;
+  main.innerHTML = `<p class="count" role="status">${on && !q.trim() ? `${res.length} of ${total} entries — filters are on` : `${res.length} entr${res.length===1?'y':'ies'}${on ? ' — filters are on' : ''}`}${res.length>300?' — first 300 shown':''}
       <button id="dl" style="float:right;background:none;border:0;padding:0;font:inherit;font-size:.8rem;font-weight:700;color:var(--green);cursor:pointer;text-decoration:underline">Download this list</button></p>
+    ${chipsHTML()}${hiddenHTML(res.length)}
     ${closeOnly ? `<p style="font-size:.8rem;color:#5A4300;background:#FFF4D6;padding:.35rem .55rem;border-radius:3px;margin:-.2rem 0 .6rem">No exact match for &ldquo;${esc(q.trim())}&rdquo;. Showing close matches: check the spelling before relying on a result.</p>` : ''}
     ${folded ? `<p style="font-size:.76rem;color:var(--ink-2);margin:-.3rem 0 .6rem">${folded} Schedule IV ${folded===1?'entry is':'entries are'} not shown: the same species is listed in Schedule I&ndash;III, which alone applies. Choose Schedule IV to list ${folded===1?'it':'them'} separately.</p>` : ''}
     <ol class="results">${show.map(r=>hitHTML(r, D.indexOf(r))).join('')}</ol>`;
@@ -955,11 +1035,19 @@ document.getElementById('q').addEventListener('input', e => {
   q = e.target.value; clearTimeout(timer);
   timer = setTimeout(() => { sel = null; render(); }, 110);
 });
+function markFilters() {                   // filters in use turn green
+  Object.entries(FSEL).forEach(([k, id]) =>
+    document.getElementById(id).classList.toggle('on', !!F[k]));
+}
+function clearFilters(keys) {
+  (keys || Object.keys(F)).forEach(k => { F[k] = ''; document.getElementById(FSEL[k]).value = ''; });
+  refreshTaxonomySelects(); markFilters(); sel = null; render();
+}
 [['fs','s'],['fw','w'],['fh','h'],['foi','oi'],['fut','ut'],['fc','c'],['fi','i'],['fgp','gp'],['fcl','cl'],['fo','o']].forEach(([id,key]) => {
   document.getElementById(id).addEventListener('change', e => {
     F[key] = e.target.value;
     if (key==='gp' || key==='cl' || key==='o') refreshTaxonomySelects();
-    sel = null; render();
+    markFilters(); sel = null; render();
   });
 });
 document.getElementById('main').addEventListener('click', e => {
@@ -968,6 +1056,9 @@ document.getElementById('main').addEventListener('click', e => {
   const cp = e.target.closest('.cplink');
   if (cp) { copyText(speciesLink(cp.dataset.id), cp); return; }
   if (e.target.closest('#dl')) { downloadList(); return; }
+  const chip = e.target.closest('[data-clear]');
+  if (chip) { clearFilters([chip.dataset.clear]); return; }
+  if (e.target.closest('[data-clearall]')) { clearFilters(); return; }
   const go = e.target.closest('.goto');
   if (go) { sel = D.findIndex(x => x.id === go.dataset.id); render(); window.scrollTo(0,0); return; }
   const b = e.target.closest('.browse button');
