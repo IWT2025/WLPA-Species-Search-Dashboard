@@ -58,7 +58,8 @@ ol.results li{border-bottom:1px solid var(--rule)}
 .hit:hover{background:var(--panel)}
 .hit .nm{flex:1;min-width:0}
 .hit .th{flex:none;width:44px;height:44px;border-radius:3px;object-fit:cover;background:var(--panel)}
-.hit span.th{display:block}
+.hit span.th{display:flex;align-items:center;justify-content:center;text-align:center;
+  font-size:.56rem;line-height:1.15;color:var(--ink-2);letter-spacing:.02em;text-transform:uppercase}
 .hit .nm b{font-weight:700;display:block;line-height:1.3}
 .hit .nm i{font-style:italic;color:var(--ink-2);font-size:.85rem}
 .hit .nm u{display:block;text-decoration:none;font-size:.76rem;color:var(--green);
@@ -546,7 +547,9 @@ function hitHTML(r, idx) {
     : r.im.replace(/\/\d+px-/, '/120px-');
   const thumb = small
     ? `<img class="th" src="${esc(small)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">`
-    : `<span class="th" aria-hidden="true"></span>`;
+    : `<span class="th" title="${r.mb || r.mbn || /^all species|spp\.?$/i.test(r.sn || '')
+          ? 'A group listing: no single photo can show it' : 'No photo available for this species'}">${
+        r.mb || r.mbn || /^all species|spp\.?$/i.test(r.sn || '') ? 'Group' : 'No photo'}</span>`;
   return `<li><button class="hit" data-i="${idx}">${thumb}
     <span class="nm"><b>${esc(r.cn)}</b><i>${esc(r.sn||'')}</i>${
       isWLPA(r) && r.g ? `<u>${esc(titleCase(r.g))}</u>` : ''}${(() => {
@@ -801,6 +804,9 @@ function detailHTML(r) {
   }
   const aka = [r.cna, r.on].filter(Boolean).join(' | ');
   if (aka) h += `<p style="font-size:.83rem;color:var(--ink-2)">Also known as: ${esc(aka.replace(/\s*\|\s*/g,', '))}</p>`;
+  h += `<p style="font-size:.74rem;color:var(--ink-2);border-top:1px solid var(--rule);padding-top:.5rem;margin-top:1rem">
+    Source: WLPA Species Lookup, compiled and developed by the <b>Wildlife Trust of India</b>.
+    Please credit WTI when you use or share this information.</p>`;
   return h + `</div>`;
 }
 
@@ -832,6 +838,11 @@ function openFromLink() {
   if (i >= 0) { sel = i; view = 'search'; }
 }
 
+// ---- attribution ----------------------------------------------------------
+const APP_URL = 'https://wlpa-species-search.streamlit.app/';
+const CITATION = 'Wildlife Trust of India (2026). WLPA Species Lookup: Schedules I-IV of the ' +
+  'Wild Life (Protection) Act, 1972, as on ' + ACT_AS_ON + '. ' + APP_URL;
+
 // ---- download the current list ------------------------------------------
 let lastList = [];
 function downloadList() {
@@ -844,13 +855,30 @@ function downloadList() {
     ['Family', r=>r.f], ['Link', r=>speciesLink(r.id)]];
   const cell = v => { v = (v === undefined || v === null) ? '' : v + '';
     return /[",\n]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; };
-  const lines = [cols.map(c=>c[0]).join(',')].concat(lastList.map(r => cols.map(c=>cell(c[1](r))).join(',')));
-  lines.push('', cell('Wild Life (Protection) Act 1972, Schedules as on ' + ACT_AS_ON +
-    '. Compiled by the Wildlife Trust of India for quick reference; refer to the authoritative text of the Act.'));
+  // credit block above the table: where the list came from, when, how it
+  // was filtered, and how to credit it
+  const L = hostLocation();
+  const from = (L.protocol === 'file:' || L.protocol === 'about:') ? APP_URL + ' (offline copy)' : L.origin + L.pathname;
+  const used = filtersOn().map(k => FNAME[k] + ': ' +
+    ((document.getElementById(FSEL[k]).selectedOptions[0] || {}).text || F[k]));
+  if (q.trim()) used.unshift('Search: ' + q.trim());
+  const today = new Date().toLocaleDateString('en-IN', {day: 'numeric', month: 'long', year: 'numeric'});
+  const head = [
+    'WLPA Species Lookup - compiled and developed by the Wildlife Trust of India',
+    'Downloaded from: ' + from + ' on ' + today,
+    'Search / filters used: ' + (used.length ? used.join('; ') : 'none (all entries)'),
+    'Please credit when you use or share this list: ' + CITATION,
+    'Schedules of the Wild Life (Protection) Act, 1972 as on ' + ACT_AS_ON +
+      '. For quick reference only; refer to the authoritative text of the Act. ' +
+      'Habitat, origin and photos are search aids compiled by WTI, not part of the Act.',
+    ''].map(cell);
+  const lines = head.concat([cols.map(c=>c[0]).join(',')])
+    .concat(lastList.map(r => cols.map(c=>cell(c[1](r))).join(',')));
+  lines.push('', cell('Source: ' + CITATION));
   const blob = new Blob(['\ufeff' + lines.join('\r\n')], {type: 'text/csv;charset=utf-8'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'WLPA_species_list_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.download = 'WLPA_species_list_WTI_' + new Date().toISOString().slice(0,10) + '.csv';
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
@@ -907,6 +935,12 @@ function renderBrowse() {
 function renderAbout() {
   const n = p => D.filter(p).length;
   document.getElementById('main').innerHTML = `<div class="about">
+    <h3>How to cite</h3>
+    <p>This app is compiled and developed by the <b>Wildlife Trust of India</b> and is free
+    to use. Whenever you use, quote, share or download information from it, please credit:</p>
+    <p style="background:var(--panel);padding:.6rem .75rem;border-radius:3px;font-size:.88rem">${esc(CITATION)}</p>
+    <p>Downloaded lists carry this credit automatically. Photos remain under their own
+    licences, shown with each photo.</p>
     <h3>What this is</h3>
     <p>A lookup for the protection status of species under the Wild Life
     (Protection) Act 1972, <b>as on ${esc(ACT_AS_ON)}</b>. Built for enforcement
